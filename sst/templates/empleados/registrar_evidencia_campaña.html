@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-body">
+      <h4 class="text-center text-primary fw-bold mb-4">
+        Registro de Evidencia de Campaña
+      </h4>
+
+      <!-- Información de la campaña -->
+      <div class="p-3 border rounded bg-light mb-4">
+        <p class="fw-bold text-secondary mb-3">
+          <strong>📢 Nombre de la Campaña:</strong>
+          {{ campaña.nombre|default:campaña.codigo.nombre|default:"Sin nombre" }}
+        </p>
+
+        <p><strong>📘 Código de campaña:</strong> {{ campaña.codigo.codigo }}</p>
+        <p><strong>📝 Detalle:</strong> {{ campaña.detalle }}</p>
+
+        <!-- Estado actual -->
+        <p>
+          <strong>📊 Estado actual:</strong>
+          {% if campaña.estado == 'activa' %}
+            <span class="badge bg-success">🟢 Activa</span>
+          {% elif campaña.estado == 'pausada' %}
+            <span class="badge bg-warning text-dark">🟡 Pausada</span>
+          {% elif campaña.estado == 'por_aprobacion' %}
+            <span class="badge bg-info text-dark">🔵 Por aprobación</span>
+          {% elif campaña.estado == 'finalizada' %}
+            <span class="badge bg-success">🟢 Finalizada</span>
+          {% elif campaña.estado == 'rechazada' %}
+            <span class="badge bg-danger">🔴 Rechazada</span>
+          {% else %}
+            <span class="badge bg-light text-dark">⚪ Desconocido</span>
+          {% endif %}
+        </p>
+
+        <p><strong>⏳ Periodicidad:</strong> {{ campaña.periodicidad }}</p>
+        <hr>
+
+        {% if campaña.multimedia %}
+          <p><strong>🎥 Archivo multimedia (campaña):</strong></p>
+          <a href="{{ campaña.multimedia.url }}" class="btn btn-outline-primary btn-sm" target="_blank">
+            📎 Ver archivo multimedia
+          </a>
+        {% else %}
+          <p class="text-muted">No hay archivo multimedia cargado por el administrador.</p>
+        {% endif %}
+
+        <!-- ✅ Observación del administrador -->
+        {% if asignacion and asignacion.observacion_admin %}
+          <div class="alert alert-warning border-0 shadow-sm mt-4 text-start">
+            <strong>🗒️ Observación del Administrador:</strong><br>
+            {{ asignacion.observacion_admin }}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Evidencia del empleado -->
+      {% if evidencia %}
+        <div class="alert alert-info text-center border-0 shadow-sm">
+          {% if campaña.estado == 'por_aprobacion' %}
+            🔵 Tu evidencia está en proceso de revisión.
+          {% elif campaña.estado == 'finalizada' %}
+            🟢 Tu evidencia fue aprobada.
+          {% elif campaña.estado == 'rechazada' %}
+            🔴 Tu evidencia fue rechazada.
+          {% else %}
+            ⚪ Tu evidencia fue registrada.
+          {% endif %}
+
+          <div class="mt-3">
+            <a href="{{ evidencia.archivo.url }}" class="btn btn-outline-primary btn-sm" target="_blank">
+              📂 Ver archivo de evidencia
+            </a>
+          </div>
+
+          {% if asignacion and asignacion.observacion_admin %}
+            <div class="alert alert-warning border-0 shadow-sm mt-4 text-start">
+              <strong>🗒️ Observación del Administrador:</strong><br>
+              {{ asignacion.observacion_admin }}
+            </div>
+          {% endif %}
+
+          <!-- ✅ Si la evidencia fue rechazada, permitir volver a cargar -->
+          {% if campaña.estado == 'rechazada' %}
+            <hr>
+            <div class="p-3 border rounded bg-white mt-3">
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                  <label for="id_archivo" class="form-label fw-bold">📤 Subir nueva evidencia:</label>
+                  {{ form.archivo }}
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-success">
+                    🔁 Reenviar evidencia para aprobación
+                  </button>
+                </div>
+              </form>
+            </div>
+          {% endif %}
+
+          <div class="mt-3">
+            <a href="{% url 'campanas_asignadas' %}" class="btn btn-primary">
+              ← Volver a Campañas Asignadas
+            </a>
+          </div>
+        </div>
+
+      {% else %}
+        <!-- Primer envío de evidencia -->
+        <div class="p-3 border rounded bg-white">
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="id_archivo" class="form-label fw-bold">📤 Subir evidencia:</label>
+              {{ form.archivo }}
+            </div>
+            <div class="text-center">
+              <button type="submit" class="btn btn-success">
+                ✅ Enviar para aprobación
+              </button>
+              <a href="{% url 'campanas_asignadas' %}" class="btn btn-secondary ms-2">
+                Cancelar
+              </a>
+            </div>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

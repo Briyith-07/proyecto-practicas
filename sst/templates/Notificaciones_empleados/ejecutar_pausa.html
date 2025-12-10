@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Ejecutar Pausa{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-body text-center">
+            <h2 class="card-title text-primary mb-3">🕒 {{ pausa.nombre }}</h2>
+            <p class="card-text text-muted">{{ pausa.descripcion }}</p>
+
+            <p><strong>Tipo:</strong> {{ pausa.tipo|title }}</p>
+            <p><strong>Duración:</strong> {{ pausa.duracion }} minutos</p>
+
+            <!-- Botón para iniciar la pausa -->
+            <button id="btnIniciar" class="btn btn-success btn-lg mt-3">
+                ▶ Iniciar Pausa
+            </button>
+
+            <!-- Contador regresivo -->
+            <div id="contador" class="mt-4 fs-3 fw-bold text-danger" style="display:none;">
+                00:00
+            </div>
+
+            <!-- Botón para volver -->
+            <a href="{% url 'listar_notificaciones_empleado' %}" class="btn btn-secondary mt-3">
+                ← Volver a mis notificaciones
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById("btnIniciar").addEventListener("click", function() {
+    let tiempoRestante = {{ pausa.duracion|default:0 }} * 60; // minutos a segundos
+    let display = document.getElementById("contador");
+    display.style.display = "block";
+    this.style.display = "none"; // ocultar botón iniciar
+
+    let intervalo = setInterval(function() {
+        let minutos = Math.floor(tiempoRestante / 60);
+        let segundos = tiempoRestante % 60;
+
+        display.textContent =
+            (minutos < 10 ? "0" : "") + minutos + ":" +
+            (segundos < 10 ? "0" : "") + segundos;
+
+        if (--tiempoRestante < 0) {
+            clearInterval(intervalo);
+            display.textContent = "✅ Pausa finalizada";
+            display.classList.remove("text-danger");
+            display.classList.add("text-success");
+        }
+    }, 1000);
+});
+</script>
+{% endblock %}

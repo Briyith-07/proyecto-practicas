@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Listado de Mensajes{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="text-center w-100">📩 Mensajes Informativos</h3>
+    {% if user.is_superuser %}
+      <a href="{% url 'crear_mensaje' %}" class="btn btn-primary btn-sm">➕ Crear Mensaje</a>
+    {% endif %}
+  </div>
+
+  <!-- Filtros -->
+  <form method="get" class="row g-2 mb-3 align-items-end">
+    <div class="col-md-4">
+      <label for="titulo" class="form-label fw-bold">Título</label>
+      <select name="titulo" id="titulo" class="form-select form-select-sm">
+        <option value="">Todos</option>
+        {% for t in titulos_disponibles %}
+          <option value="{{ t }}" {% if filtros.titulo == t %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label for="fecha_evento_desde" class="form-label fw-bold">Fecha Evento Desde</label>
+      <input type="date" name="fecha_evento_desde" id="fecha_evento_desde" class="form-control form-control-sm" value="{{ filtros.fecha_evento_desde }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="fecha_evento_hasta" class="form-label fw-bold">Fecha Evento Hasta</label>
+      <input type="date" name="fecha_evento_hasta" id="fecha_evento_hasta" class="form-control form-control-sm" value="{{ filtros.fecha_evento_hasta }}">
+    </div>
+
+    <div class="col-md-2 d-flex gap-1">
+      <button type="submit" class="btn btn-primary btn-sm flex-fill">Filtrar</button>
+      <a href="{% url 'panel_mensajes' %}" class="btn btn-secondary btn-sm flex-fill">Limpiar</a>
+    </div>
+  </form>
+
+  {% if mensajes %}
+    <div class="table-responsive shadow-sm rounded">
+      <table class="table table-hover align-middle table-bordered table-sm">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Título</th>
+            <th style="width: 30%;">Contenido</th>
+            <th>Fecha Evento</th>
+            <th>Creado</th>
+            <th>Actualizado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for mensaje in mensajes %}
+          <tr id="mensaje-{{ mensaje.id }}">
+            <td>{{ forloop.counter }}</td>
+            <td>{{ mensaje.titulo }}</td>
+            <td>
+              <div class="text-truncate" style="max-width:300px;">{{ mensaje.contenido }}</div>
+            </td>
+            <td>{% if mensaje.fecha_evento %}{{ mensaje.fecha_evento|date:"d/m/Y H:i" }}{% else %}-{% endif %}</td>
+            <td>{{ mensaje.creado|date:"d/m/Y H:i" }}</td>
+            <td>{{ mensaje.actualizado|date:"d/m/Y H:i" }}</td>
+            <td class="text-center">
+              {% if user.is_superuser %}
+                <a href="{% url 'editar_mensaje' mensaje.id %}" class="btn btn-sm btn-warning">Editar</a>
+                <button onclick="confirmarEliminacion({{ mensaje.id }})" class="btn btn-sm btn-danger">Eliminar</button>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    {% if page_obj %}
+    <nav aria-label="Page navigation" class="mt-3">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if filtros.titulo %}&titulo={{ filtros.titulo }}{% endif %}{% if filtros.fecha_evento_desde %}&fecha_evento_desde={{ filtros.fecha_evento_desde }}{% endif %}{% if filtros.fecha_evento_hasta %}&fecha_evento_hasta={{ filtros.fecha_evento_hasta }}{% endif %}">Anterior</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+        {% endif %}
+
+        <li class="page-item disabled"><span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if filtros.titulo %}&titulo={{ filtros.titulo }}{% endif %}{% if filtros.fecha_evento_desde %}&fecha_evento_desde={{ filtros.fecha_evento_desde }}{% endif %}{% if filtros.fecha_evento_hasta %}&fecha_evento_hasta={{ filtros.fecha_evento_hasta }}{% endif %}">Siguiente</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+
+  {% else %}
+    <p class="text-center text-muted mt-3">No se encontraron mensajes.</p>
+  {% endif %}
+
+  <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary mt-3">⬅ Volver</a>
+</div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function confirmarEliminacion(id) {
+    Swal.fire({
+        title: "¿Eliminar mensaje?",
+        text: "Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/mensajes/eliminar/${id}/`;
+        }
+    });
+}
+</script>
+{% endblock %}

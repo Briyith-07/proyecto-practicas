@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle Notificación - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white text-center">
+            <h4>📌 Detalle de Notificación</h4>
+        </div>
+        <div class="card-body">
+            
+            <p><strong>Título:</strong> <span class="text-primary">{{ notificacion.titulo }}</span></p>
+
+            <p><strong>Usuario:</strong> {{ notificacion.usuario.first_name }} {{ notificacion.usuario.last_name }}</p>
+            <p><strong>Cédula:</strong> {{ notificacion.usuario.cedula }}</p>
+
+            <p><strong>Campaña:</strong> 
+                {% if notificacion.campaña.codigo %}
+                    {{ notificacion.campaña.codigo.codigo }} - {{ notificacion.campaña.codigo.nombre }}
+                {% else %}
+                    <span class="text-muted">Sin campaña asociada</span>
+                {% endif %}
+            </p>
+
+            <!-- 🔹 Aquí se reemplaza el tipo por "Web y Correo" -->
+            <p><strong>Tipo:</strong> Web y Correo</p>
+
+            <p><strong>Fecha de envío:</strong> {{ notificacion.fecha_envio|date:"d/m/Y H:i" }}</p>
+
+            <p><strong>Enviada:</strong> 
+                {% if notificacion.enviada %}
+                    <span class="badge bg-success">Sí</span>
+                {% else %}
+                    <span class="badge bg-danger">No</span>
+                {% endif %}
+            </p>
+
+            <p><strong>Abierta:</strong> 
+                {% if notificacion.abierta %}
+                    <span class="badge bg-success">Sí</span> 
+                    <small class="text-muted">(abierta el {{ notificacion.fecha_apertura|date:"d/m/Y H:i" }})</small>
+                {% else %}
+                    <span class="badge bg-secondary">No</span>
+                {% endif %}
+            </p>
+        </div>
+        <div class="card-footer text-center">
+            <a href="/admin/notificaciones/" class="btn btn-outline-secondary">⬅ Volver</a>
+            <a href="{% url 'editar_notificacion' notificacion.id %}" class="btn btn-warning">✏ Editar</a>
+            <a href="{% url 'eliminar_notificacion' notificacion.id %}" class="btn btn-danger">🗑 Eliminar</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

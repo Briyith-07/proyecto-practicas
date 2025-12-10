@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  .valid {
+    color: rgba(3, 181, 3, 0.662);
+    font-weight: bold;
+  }
+  .invalid {
+    color: rgba(131, 127, 127, 0.537);
+    font-weight: bold;
+  }
+</style>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm rounded-4">
+        <div class="card-body p-5">
+          <h3 class="text-center fw-bold">Regístrate y Realiza seguimientos a tus actividades</h3>
+          <p class="text-center text-muted">Ingresa tus datos y sé parte de nuestro equipo de seguridad y salud</p>
+
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+
+          <form method="post" class="row g-3 mt-4">
+            {% csrf_token %}
+
+            <div class="col-md-6">
+              {{ form.first_name }}
+              {% if form.first_name.errors %}
+                <div class="text-danger small">{{ form.first_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="col-md-6">
+              {{ form.last_name }}
+              {% if form.last_name.errors %}
+                <div class="text-danger small">{{ form.last_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+
+            <div class="col-md-12">
+  {{ form.cedula }}
+  {% if form.cedula.errors %}
+    <div class="text-danger small">{{ form.cedula.errors.0 }}</div>
+  {% endif %}
+</div>
+
+            <div class="col-md-12">
+              {{ form.telefono }}
+              {% if form.telefono.errors %}
+                <div class="text-danger small">{{ form.telefono.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="col-md-6">
+              {{ form.departamento }}
+              {% if form.departamento.errors %}
+                <div class="text-danger small">{{ form.departamento.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="col-md-6">
+              {{ form.ciudad }}
+              {% if form.ciudad.errors %}
+                <div class="text-danger small">{{ form.ciudad.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="col-md-12">
+              {{ form.direccion }}
+              {% if form.direccion.errors %}
+                <div class="text-danger small">{{ form.direccion.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="col-md-12">
+              {{ form.email }}
+              {% if form.email.errors %}
+                <div class="text-danger small">{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="col-md-6">
+              <div class="input-group">
+                {{ form.password1 }}
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('id_password1')">👁</button>
+              </div>
+              {% if form.password1.errors %}
+                <div class="text-danger small">{{ form.password1.errors.0 }}</div>
+              {% endif %}
+              <ul id="password-requirements" class="mt-2 mb-0">
+                <li id="lower-upper" class="invalid">✔ Minúsculas y Mayúsculas</li>
+                <li id="number" class="invalid">✔ Número (0-9)</li>
+                <li id="special" class="invalid">✔ Carácter especial (^!@#$%&*)</li>
+                <li id="length" class="invalid">✔ Al menos 8 caracteres</li>
+              </ul>
+            </div>
+
+            <div class="col-md-6">
+              <div class="input-group">
+                {{ form.password2 }}
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('id_password2')">👁</button>
+              </div>
+              {% if form.password2.errors %}
+                <div class="text-danger small">{{ form.password2.errors.0 }}</div>
+              {% endif %}
+              <small id="password-match-msg" class="form-text text-danger"></small>
+            </div>
+
+            <div class="col-md-12 form-check ms-2">
+              {{ form.terminos }}
+              <label class="form-check-label" for="{{ form.terminos.id_for_label }}">
+                Acepto los términos y condiciones
+              </label>
+              {% if form.terminos.errors %}
+                <div class="text-danger small">{{ form.terminos.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+            </div>
+            <div class="col-12">
+              <a href="{% url 'inicio' %}" class="btn btn-secondary w-100">Volver</a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const departamentoSelect = document.getElementById("id_departamento");
+    const ciudadSelect = document.getElementById("id_ciudad");
+
+    const ciudadesPorDepartamento = {
+      "Cundinamarca": ["Girardot", "Soacha", "Fusagasugá", "Zipaquirá", "Ricaurte"],
+      "Antioquia": ["Medellín", "Envigado", "Bello", "Itagüí"],
+      "Valle del Cauca": ["Cali", "Palmira", "Buenaventura", "Tuluá"],
+      "Bogotá": ["Bogotá"]
+    };
+
+    function actualizarCiudades() {
+      const deptSeleccionado = departamentoSelect.value;
+      ciudadSelect.innerHTML = '';
+
+      if (ciudadesPorDepartamento[deptSeleccionado]) {
+        ciudadSelect.disabled = false;
+        ciudadSelect.appendChild(new Option("Seleccione una ciudad", ""));
+        ciudadesPorDepartamento[deptSeleccionado].forEach(function (ciudad) {
+          ciudadSelect.appendChild(new Option(ciudad, ciudad));
+        });
+      } else {
+        ciudadSelect.disabled = true;
+        ciudadSelect.appendChild(new Option("Seleccione una ciudad", ""));
+      }
+    }
+
+    departamentoSelect.addEventListener("change", actualizarCiudades);
+    actualizarCiudades(); // inicial
+  });
+
+  function togglePassword(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+  }
+
+  const passwordInput = document.getElementById("id_password1");
+  const passwordConfirm = document.getElementById("id_password2");
+  const lowerUpper = document.getElementById("lower-upper");
+  const number = document.getElementById("number");
+  const special = document.getElementById("special");
+  const length = document.getElementById("length");
+  const matchMsg = document.getElementById("password-match-msg");
+
+  function validarPassword() {
+    const pwd = passwordInput.value;
+    const hasLower = /[a-z]/.test(pwd);
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasNumber = /\d/.test(pwd);
+    const hasSpecial = /[\^!@#$%&*]/.test(pwd);
+    const hasLength = pwd.length >= 8;
+
+    lowerUpper.classList.toggle("valid", hasLower && hasUpper);
+    lowerUpper.classList.toggle("invalid", !(hasLower && hasUpper));
+
+    number.classList.toggle("valid", hasNumber);
+    number.classList.toggle("invalid", !hasNumber);
+
+    special.classList.toggle("valid", hasSpecial);
+    special.classList.toggle("invalid", !hasSpecial);
+
+    length.classList.toggle("valid", hasLength);
+    length.classList.toggle("invalid", !hasLength);
+  }
+
+  function validarCoincidencia() {
+    if (passwordInput.value && passwordConfirm.value) {
+      if (passwordInput.value === passwordConfirm.value) {
+        matchMsg.textContent = "✔ Las contraseñas coinciden.";
+        matchMsg.classList.remove("text-danger");
+        matchMsg.classList.add("text-success");
+      } else {
+        matchMsg.textContent = "✖ Las contraseñas no coinciden.";
+        matchMsg.classList.remove("text-success");
+        matchMsg.classList.add("text-danger");
+      }
+    } else {
+      matchMsg.textContent = "";
+    }
+  }
+
+  passwordInput?.addEventListener("input", () => {
+    validarPassword();
+    validarCoincidencia();
+  });
+
+  passwordConfirm?.addEventListener("input", validarCoincidencia);
+</script>
+{% endblock %}

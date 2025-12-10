@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Rol{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-warning text-white py-3 rounded-top">
+            <h4 class="mb-0">✏️ Editar Rol: {{ rol.nombre }}</h4>
+        </div>
+
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.nombre.label_tag }}
+                    {{ form.nombre }}
+                </div>
+
+                <h5 class="text-primary mb-2">Permisos</h5>
+                <div class="mb-3">
+                    {{ form.permisos }}
+                </div>
+
+                <div class="mt-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-warning me-2">Guardar Cambios</button>
+                    <a href="{% url 'listar_roles' %}" class="btn btn-outline-secondary">⬅ Volver</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

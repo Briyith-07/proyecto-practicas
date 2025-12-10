@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de la Notificación{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-primary text-white py-3 rounded-top">
+            <h4 class="mb-0">📩 {{ notificacion.titulo }}</h4>
+        </div>
+
+        <div class="card-body">
+
+            <!-- Información del remitente -->
+            <div class="mb-3">
+                <p class="mb-1">
+                    <strong class="text-primary">👤 De:</strong><br>
+                    {% if notificacion.remitente %}
+                        {{ notificacion.remitente.first_name }} {{ notificacion.remitente.last_name }}
+                        <span class="text-muted">({{ notificacion.remitente.cargo }})</span>
+                    {% else %}
+                        <span class="text-muted">Sistema / Administrador</span>
+                    {% endif %}
+                </p>
+
+                <p class="mb-1">
+                    <strong class="text-primary">📅 Enviada el:</strong>
+                    {{ notificacion.fecha_envio|date:"l, d M Y - H:i" }}
+                </p>
+
+                <p>
+                    <strong class="text-primary">📌 Estado:</strong>
+                    {% if notificacion.abierta %}
+                        <span class="badge bg-success ms-2">Leída</span>
+                    {% else %}
+                        <span class="badge bg-danger ms-2">No leída</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <hr>
+
+            {% if notificacion.campaña %}
+                <!-- Sección de campaña -->
+                <h5 class="text-primary mb-3">📂 Detalles de la Campaña</h5>
+
+                <div class="p-3 bg-light rounded border">
+                    <p><strong>Nombre:</strong> {{ notificacion.campaña.nombre }}</p>
+                    <p><strong>Código:</strong> {{ notificacion.campaña.codigo.codigo }}</p>
+                    <p><strong>Detalle:</strong> {{ notificacion.campaña.detalle }}</p>
+                    <p><strong>Periodicidad:</strong> {{ notificacion.campaña.periodicidad }}</p>
+                    <p><strong>Fecha de creación:</strong> {{ notificacion.campaña.fecha_creacion|date:"d/m/Y" }}</p>
+
+                    {% if asignacion %}
+                        <p class="mb-0">
+                            <strong>Fecha de vencimiento:</strong> 
+                            {{ asignacion.fecha_vencimiento|date:"d/m/Y" }}
+                        </p>
+                    {% endif %}
+                </div>
+
+            {% else %}
+                <!-- Mensaje informativo -->
+                <h5 class="text-primary mb-3">💬 Mensaje informativo</h5>
+
+                <div class="p-3 bg-light rounded border">
+
+                    {% if notificacion.mensaje %}
+                        <p><strong>Contenido:</strong> {{ notificacion.mensaje }}</p>
+                    {% endif %}
+
+                    {% if notificacion.fecha_evento %}
+                        <p class="mt-2">
+                            <strong>📅 Fecha del evento:</strong><br>
+                            {{ notificacion.fecha_evento|date:"d/m/Y H:i" }}
+                        </p>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+
+            <div class="mt-4 text-end">
+                <a href="{% url 'listar_notificaciones_empleado' %}" class="btn btn-outline-primary px-4">
+                    ⬅ Volver a Notificaciones
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">📊 Historial de Participación</h2>
+
+    <!-- Botón Volver -->
+    <div class="mb-3">
+        <a href="{% url 'dashboard_empleado' %}" class="btn btn-secondary">⬅ Volver</a>
+    </div>
+
+    {% if mensaje %}
+        <div class="alert alert-info text-center">{{ mensaje }}</div>
+    {% elif campañas %}
+        <!-- Tabla de participación -->
+        <div class="table-responsive mb-5">
+            <table class="table table-striped table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre de la Campaña</th>
+                        <th>Fecha de Participación</th>
+                        <th>Evidencia</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for camp in campañas %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+
+                        <!-- Nombre de la campaña -->
+                        <td>
+                            {% if camp.campaña and camp.campaña.nombre %}
+                                {{ camp.campaña.nombre }}
+                            {% else %}
+                                <span class="text-muted">Sin nombre</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Fecha de participación -->
+                        <td>
+                            {% if camp.fecha_subida %}
+                                {{ camp.fecha_subida|date:"d/m/Y H:i" }}
+                            {% else %}
+                                <span class="text-muted">Sin fecha</span>
+                            {% endif %}
+                        </td>
+                        <!-- Evidencia -->
+                        <td>
+                            {% if camp.archivo %}
+                                <a href="{{ camp.archivo.url }}" target="_blank">Ver evidencia</a>
+                            {% else %}
+                                <span class="text-muted">No subida</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Estado -->
+                        <td>
+                            {% if camp.campaña and camp.campaña.estado %}
+                                <span class="badge 
+                                    {% if camp.campaña.estado == 'activa' %}bg-success
+                                    {% elif camp.campaña.estado == 'finalizada' %}bg-danger
+                                    {% elif camp.campaña.estado == 'pausada' %}bg-warning text-dark
+                                    {% else %}bg-secondary{% endif %}
+                                ">
+                                    {{ camp.campaña.estado|title }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">No especificado</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Gráfica debajo de la tabla -->
+        <div class="mb-5">
+            <canvas id="graficaCampañas"></canvas>
+        </div>
+
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        const ctx = document.getElementById('graficaCampañas')?.getContext('2d');
+        if (ctx) {
+            const conteoEstados = JSON.parse('{{ conteo_estados_json|escapejs }}');
+            const estados = Object.keys(conteoEstados);
+            const cantidades = Object.values(conteoEstados);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: estados,
+                    datasets: [{
+                        label: 'Cantidad de campañas por estado',
+                        data: cantidades,
+                        backgroundColor: [
+                            '#0d6efd', // Activa
+                            '#198754', // Finalizada
+                            '#ffc107', // Pausada
+                            '#dc3545', // Rechazada
+                            '#6c757d'  // Por aprobación
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Participación en campañas por estado'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            precision: 0
+                        }
+                    }
+                }
+            });
+        }
+        </script>
+
+    {% else %}
+        <div class="alert alert-info text-center">
+            No hay registros de participación en campañas.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

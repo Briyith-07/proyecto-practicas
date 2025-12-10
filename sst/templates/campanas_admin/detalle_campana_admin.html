@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Detalle de Campaña Asignada{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">Detalle de Campaña Asignada</h2>
+
+  <div class="card shadow p-4">
+
+    <!-- Información del empleado -->
+    <p>
+      <strong>Empleado:</strong>
+      {% if asignacion.empleado %}
+        {{ asignacion.empleado.first_name }} {{ asignacion.empleado.last_name }}
+      {% else %}
+        <span class="text-muted">No asignado</span>
+      {% endif %}
+    </p>
+
+    <p>
+      <strong>Estado actual:</strong>
+      {% if asignacion.campaña.estado == "Aprobada" %}
+        🟢 Aprobada
+      {% elif asignacion.campaña.estado == "Rechazada" %}
+        🔴 Rechazada
+      {% else %}
+        🟡 Pendiente de aprobacion
+      {% endif %}
+    </p>
+
+    <p><strong>Fecha de asignación:</strong> {{ asignacion.fecha_asignacion|date:"d/m/Y" }}</p>
+
+    <hr>
+
+    <!-- Información de la campaña -->
+    <h5 class="mb-3">Información de la Campaña</h5>
+
+    <p><strong>Código:</strong> {{ asignacion.campaña.codigo.codigo }}</p>
+    <p><strong>Nombre:</strong> {{ asignacion.campaña.codigo.nombre }}</p>
+    <p><strong>Periodicidad:</strong> {{ asignacion.campaña.periodicidad }}</p>
+
+    <!-- Archivo de la campaña -->
+    <p><strong>Archivo de la Campaña:</strong>
+      {% if asignacion.campaña.recurso %}
+        <a href="{{ asignacion.campaña.recurso.url }}" target="_blank" class="text-info">📄 Ver recurso</a>
+      {% elif asignacion.campaña.multimedia %}
+        <a href="{{ asignacion.campaña.multimedia.url }}" target="_blank" class="text-info">🎥 Ver multimedia</a>
+      {% else %}
+        <span class="text-muted">No se ha cargado ningún archivo.</span>
+      {% endif %}
+    </p>
+
+    <hr>
+
+    <!-- Evidencia -->
+    <h5 class="mb-3">Evidencia del Empleado</h5>
+
+    {% if evidencia and evidencia.archivo %}
+      <p><strong>Archivo cargado:</strong></p>
+
+      <a href="{{ evidencia.archivo.url }}" target="_blank" class="btn btn-outline-info mb-3">
+        📎 Ver evidencia del empleado
+      </a>
+
+      <p class="text-muted">
+        <em>Última actualización: {{ evidencia.fecha_subida|date:"d/m/Y H:i" }}</em>
+      </p>
+
+    {% else %}
+      <p class="text-muted">El empleado aún no ha subido evidencia.</p>
+    {% endif %}
+
+    <hr>
+
+    <!-- Observación y botones -->
+    <form method="post" class="mt-3">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label for="observacion" class="form-label"><strong>Observación del Administrador:</strong></label>
+        <textarea name="observacion" id="observacion" class="form-control" rows="3"
+          placeholder="Escribe aquí alguna observación...">{% if asignacion.observacion_admin %}{{ asignacion.observacion_admin }}{% endif %}</textarea>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" name="accion" value="aprobar" class="btn btn-success"
+                {% if asignacion.campaña.estado == "finalizada" %}disabled{% endif %}>
+          Aprobar
+        </button>
+
+        <button type="submit" name="accion" value="rechazar" class="btn btn-danger"
+                {% if asignacion.campaña.estado == "finalizada" %}disabled{% endif %}>
+          Rechazar
+        </button>
+
+        <a href="{% url 'campanas_admin' %}" class="btn btn-secondary">Volver</a>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

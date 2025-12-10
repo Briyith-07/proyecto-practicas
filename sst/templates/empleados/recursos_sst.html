@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Recursos SST{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4 text-primary">📚 Recursos SST</h2>
+
+  <!-- Filtros -->
+  <form method="get" class="row g-3 mb-4 align-items-end">
+    <div class="col-md-4">
+      <label for="tipo" class="form-label">Filtrar por Tipo</label>
+      <select name="tipo" id="tipo" class="form-select">
+        <option value="">Todos</option>
+        <option value="video" {% if tipo == 'video' %}selected{% endif %}>Video</option>
+        <option value="imagen" {% if tipo == 'imagen' %}selected{% endif %}>Imagen</option>
+        <option value="documento" {% if tipo == 'documento' %}selected{% endif %}>Documento</option>
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label for="desde" class="form-label">Desde</label>
+      <input type="date" name="desde" id="desde" class="form-control" value="{{ desde }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="hasta" class="form-label">Hasta</label>
+      <input type="date" name="hasta" id="hasta" class="form-control" value="{{ hasta }}">
+    </div>
+
+    <div class="col-md-2 d-flex gap-1">
+      <button type="submit" class="btn btn-sm btn-primary flex-fill">Filtrar</button>
+      <a href="{% url 'recursos_sst' %}" class="btn btn-sm btn-secondary flex-fill">Limpiar</a>
+    </div>
+  </form>
+
+  {% if page_obj %}
+    <div class="row">
+      {% for rec in page_obj %}
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="card-title text-primary">{{ rec.recurso.titulo }}</h5>
+                <p class="card-text"><strong>Tipo:</strong> {{ rec.recurso.get_tipo_display }}</p>
+                {% if rec.recurso.descripcion %}
+                  <p class="card-text"><strong>Descripción:</strong> {{ rec.recurso.descripcion }}</p>
+                {% endif %}
+                <p class="card-text"><small class="text-muted">Subido: {{ rec.recurso.fecha_subida|date:"d/m/Y H:i" }}</small></p>
+              </div>
+              <div class="mt-2">
+                <a href="{{ rec.recurso.archivo.url }}" target="_blank" class="btn btn-outline-primary w-100">
+                  📂 Abrir / Descargar
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    {% if page_obj.has_other_pages %}
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mt-4">
+
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}&tipo={{ tipo }}&desde={{ desde }}&hasta={{ hasta }}">«</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">«</span></li>
+          {% endif %}
+
+          {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+              <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% else %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ num }}&tipo={{ tipo }}&desde={{ desde }}&hasta={{ hasta }}">{{ num }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}&tipo={{ tipo }}&desde={{ desde }}&hasta={{ hasta }}">»</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">»</span></li>
+          {% endif %}
+
+        </ul>
+      </nav>
+    {% endif %}
+
+  {% else %}
+    <div class="alert alert-info text-center">
+      No hay recursos disponibles por el momento.
+    </div>
+  {% endif %}
+
+  <!-- Botón volver -->
+  <div class="text-center mt-4">
+    <a href="{% url 'dashboard_empleado' %}" class="btn btn-secondary">Volver</a>
+  </div>
+</div>
+{% endblock %}

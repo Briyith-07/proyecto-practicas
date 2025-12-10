@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de la Campaña{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title">📌 Detalle de la Campaña</h3>
+
+            <!-- Código + Nombre juntos -->
+            <p><strong>Código:</strong> {{ campaña.codigo.codigo }} - {{ campaña.codigo.nombre }}</p>
+
+            <p><strong>Detalle:</strong> {{ campaña.detalle }}</p>
+
+            <p><strong>Periodicidad:</strong> {{ campaña.periodicidad }}</p>
+
+            <p><strong>Fecha de creación:</strong> {{ campaña.fecha_creacion|date:"d/m/Y" }}</p>
+
+            <p><strong>Fecha de vencimiento:</strong>
+                {% if asignacion %}
+                    {{ asignacion.fecha_vencimiento|date:"d/m/Y" }}
+                {% else %}
+                    -
+                {% endif %}
+            </p>
+
+            <!-- Multimedia (si existe) -->
+            {% if campaña.multimedia %}
+                <p><strong>Multimedia adjunta:</strong></p>
+                <a href="{{ campaña.multimedia.url }}" class="btn btn-outline-primary" download>
+                    📎 Descargar archivo
+                </a>
+            {% endif %}
+
+            <div class="mt-4">
+                <a href="{% url 'listar_notificaciones_empleado' %}" class="btn btn-secondary">
+                    ⬅️ Volver a Notificaciones
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

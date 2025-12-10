@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Códigos Registrados{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Códigos Registrados</h2>
+
+  <div class="text-end mb-3">
+    <a href="{% url 'crear_codigo' %}" class="btn btn-success">Crear Código</a>
+  </div>
+
+  <table class="table table-bordered table-striped table-responsive">
+    <thead class="table-dark text-center align-middle">
+      <tr>
+        <th>#</th>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for codigo in codigos %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ codigo.codigo }}</td>
+        <td>{{ codigo.nombre }}</td>
+        <td class="text-nowrap text-center">
+          <div class="d-flex gap-1 justify-content-center">
+            <a href="{% url 'editar_codigo' codigo.id %}" class="btn btn-sm btn-warning">Editar</a>
+
+            <!-- Botón que abre el modal de eliminación -->
+            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalEliminar{{ codigo.id }}">
+              Eliminar
+            </button>
+          </div>
+
+          <!-- Modal de confirmación de eliminación -->
+          <div class="modal fade" id="modalEliminar{{ codigo.id }}" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                  <h5 class="modal-title">Confirmar Eliminación</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  ¿Estás seguro de que deseas eliminar el código <strong>{{ codigo.codigo }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <form method="post" action="{% url 'eliminar_codigo' codigo.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Sí, Eliminar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4" class="text-center">No hay códigos registrados.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="text-center mt-4">
+    <a href="{% url 'listar_campañas' %}" class="btn btn-secondary">Volver</a>
+
+  </div>
+</div>
+{% endblock %}

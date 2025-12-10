@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Editar Usuario Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm p-4">
+        <h2 class="text-center mb-4">Editar Usuario Admin</h2>
+
+        <form method="post" action="{% url 'editar_usuario_admin' usuario.id %}">
+            {% csrf_token %}
+
+            <!-- Nombre y Apellido -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nombre</label>
+                    {{ form.first_name|add_class:"form-control" }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Apellido</label>
+                    {{ form.last_name|add_class:"form-control" }}
+                </div>
+            </div>
+
+            <!-- Correo y Cédula -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Correo</label>
+                    {{ form.email|add_class:"form-control" }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Cédula</label>
+                    {{ form.cedula|add_class:"form-control" }}
+                </div>
+            </div>
+
+            <!-- Dirección -->
+            <div class="mb-3">
+                <label class="form-label">Dirección</label>
+                {{ form.direccion|add_class:"form-control" }}
+            </div>
+
+            <!-- Teléfono y Departamento -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Teléfono</label>
+                    {{ form.telefono|add_class:"form-control" }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Departamento</label>
+                    {{ form.departamento|add_class:"form-select" }}
+                </div>
+            </div>
+
+            <!-- Ciudad -->
+            <div class="mb-3">
+                <label class="form-label">Ciudad</label>
+                {{ form.ciudad|add_class:"form-select" }}
+            </div>
+
+            <!-- Rol (solo si se muestra) -->
+            {% if mostrar_rol %}
+            <div class="mb-3">
+                <label class="form-label">Rol</label>
+                {{ form.rol|add_class:"form-select" }}
+            </div>
+            {% endif %}
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-center gap-3 mt-4">
+    <a href="{% url 'listar_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</div>
+        </form>
+    </div>
+</div>
+
+<!-- Script para actualizar ciudades según departamento -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const deptSelect = document.getElementById("id_departamento");
+    const ciudadSelect = document.getElementById("id_ciudad");
+    const ciudadesPorDepartamento = {{ ciudades_por_departamento|safe }};
+
+    function actualizarCiudades() {
+        const dept = deptSelect.value;
+        ciudadSelect.innerHTML = '';
+        if (ciudadesPorDepartamento[dept]) {
+            ciudadSelect.disabled = false;
+            ciudadSelect.appendChild(new Option("Seleccione una ciudad", ""));
+            ciudadesPorDepartamento[dept].forEach(function(ciudad){
+                const opt = new Option(ciudad, ciudad);
+                if (ciudad === "{{ form.ciudad.value|default:usuario.perfil.ciudad|default:'' }}") {
+                    opt.selected = true;
+                }
+                ciudadSelect.appendChild(opt);
+            });
+        } else {
+            ciudadSelect.disabled = true;
+            ciudadSelect.appendChild(new Option("Seleccione una ciudad", ""));
+        }
+    }
+
+    deptSelect.addEventListener("change", actualizarCiudades);
+    actualizarCiudades();
+});
+</script>
+{% endblock %}

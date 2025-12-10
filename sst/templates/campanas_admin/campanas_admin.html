@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Campañas Asignadas y Realizadas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Campañas Asignadas y Realizadas</h2>
+
+  <!-- Filtros -->
+  <form method="get" class="row g-3 mb-3">
+    <div class="col-md-3">
+      <label for="empleado" class="form-label">Empleado</label>
+      <select name="empleado" id="empleado" class="form-select">
+        <option value="">Todos</option>
+        {% for e in empleados %}
+          <option value="{{ e.id }}" {% if filtro_empleado == e.id|stringformat:"s" %}selected{% endif %}>
+            {{ e.first_name }} {{ e.last_name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label for="estado" class="form-label">Estado</label>
+      <select name="estado" id="estado" class="form-select">
+        <option value="">Todos</option>
+
+        {% for key, label in estados %}
+          {% if key == 'finalizada' %}
+            <option value="finalizada" {% if filtro_estado == 'finalizada' %}selected{% endif %}>Aprobada</option>
+          {% else %}
+            <option value="{{ key }}" {% if filtro_estado == key %}selected{% endif %}>{{ label }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label for="periodicidad" class="form-label">Periodicidad</label>
+      <select name="periodicidad" id="periodicidad" class="form-select">
+        <option value="">Todas</option>
+        {% for key, label in periodicidades %}
+          <option value="{{ key }}" {% if filtro_periodicidad == key %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+      <a href="{% url 'campanas_admin' %}" class="btn btn-secondary">Limpiar</a>
+    </div>
+  </form>
+
+  <table class="table table-bordered table-striped text-center align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Empleado</th>
+        <th>Campaña</th>
+        <th>Periodicidad</th>
+        <th>Estado Actual</th>
+        <th>Fecha Asignación</th>
+        <th>Fecha de Vencimiento</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for a in asignadas %}
+        <tr>
+          <td>{{ a.empleado.first_name }} {{ a.empleado.last_name }}</td>
+          <td>{{ a.campaña.codigo.codigo }} - {{ a.campaña.codigo.nombre }}</td>
+          <td>{{ a.campaña.periodicidad }}</td>
+
+          <!-- Estado corregido -->
+          <td>
+            {% if a.campaña.estado == 'finalizada' or a.campaña.estado == 'aprobada' %}
+              <span class="badge bg-success">Aprobada</span>
+
+            {% elif a.campaña.estado == 'rechazada' %}
+              <span class="badge bg-danger">Rechazada</span>
+
+            {% elif a.campaña.estado == 'por_aprobacion' %}
+              <span class="badge bg-warning">Pendiente de aprobación</span>
+
+            {% else %}
+              <span class="badge bg-secondary">{{ a.campaña.estado|capfirst }}</span>
+            {% endif %}
+          </td>
+
+          <td>{{ a.fecha_asignacion|date:"d/m/Y H:i" }}</td>
+
+          <td>
+            {% if a.fecha_vencimiento %}
+              {{ a.fecha_vencimiento|date:"d/m/Y H:i" }}
+            {% else %}
+              <span class="text-muted">No definida</span>
+            {% endif %}
+          </td>
+
+          <td>
+            <a href="{% url 'detalle_campana_admin' a.id %}" class="btn btn-sm btn-outline-primary">
+              Ver detalles
+            </a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="7" class="text-muted">No hay campañas asignadas.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="text-center mt-4">
+    <a href="/panel/dashboard/" class="btn btn-secondary">Volver</a>
+  </div>
+
+</div>
+{% endblock %}

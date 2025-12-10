@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Usuarios Registrados</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Usuario</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Teléfono</th>
+            <th>Departamento</th>
+            <th>Ciudad</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ usuario.username }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>{{ usuario.cargo }}</td>
+            <td>{{ usuario.telefono }}</td>
+            <td>{{ usuario.departamento }}</td>
+            <td>{{ usuario.ciudad }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'admin_dashboard' %}" class="btn btn-primary">Volver</a>
+{% endblock %}

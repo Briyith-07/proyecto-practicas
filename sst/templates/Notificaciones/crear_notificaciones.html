@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Crear Notificación{% endblock %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="card shadow-lg p-4 w-100" style="max-width: 800px;">
+    <h2 class="text-center mb-4 text-primary">
+      <i class="bi bi-bell-fill"></i> Crear Notificación
+    </h2>
+
+    <form method="post" class="needs-validation" novalidate>
+      {% csrf_token %}
+
+      <!-- Selección de campaña -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Campaña</label>
+        {{ form.campaña|add_class:"form-select"|attr:"id:id_campaña" }}
+      </div>
+
+      <!-- Campos de información de la campaña -->
+      <div id="info-campaña" style="display:none;">
+        <div class="mb-3">
+          <label class="form-label">Detalle</label>
+          <input type="text" id="detalle" class="form-control" readonly>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Estado</label>
+          <input type="text" id="estado" class="form-control" readonly>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Periodicidad</label>
+          <input type="text" id="periodicidad" class="form-control" readonly>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Multimedia</label>
+          <div id="multimedia-container" class="form-control border-0 p-0"></div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Fecha de creación</label>
+          <input type="text" id="fecha_creacion" class="form-control" readonly>
+        </div>
+      </div>
+
+      <!-- Selección de usuario -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Usuario</label>
+        {{ form.usuario|add_class:"form-select"|attr:"id:id_usuario" }}
+      </div>
+
+      <!-- Cédula automática -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Cédula</label>
+        {{ form.cedula|add_class:"form-control"|attr:"id:id_cedula"|attr:"readonly:readonly" }}
+      </div>
+
+      <!-- Título y mensaje -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Título</label>
+        {{ form.titulo|add_class:"form-control" }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Mensaje</label>
+        {{ form.mensaje|add_class:"form-control" }}
+      </div>
+
+      <!-- Botones -->
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success px-4 me-2">
+          <i class="bi bi-save"></i> Guardar
+        </button>
+        <a href="{% url 'listar_notificaciones' %}" class="btn btn-secondary px-4">
+          <i class="bi bi-x-circle"></i> Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Scripts -->
+{{ campañas_info|json_script:"campañas-data" }}
+{{ usuarios_info|json_script:"usuarios-data" }}
+
+<script>
+const campañasInfo = JSON.parse(document.getElementById('campañas-data').textContent);
+const usuariosInfo = JSON.parse(document.getElementById('usuarios-data').textContent);
+
+const selectCampaña = document.getElementById("id_campaña");
+const infoDiv = document.getElementById("info-campaña");
+const selectUsuario = document.getElementById("id_usuario");
+const inputCedula = document.getElementById("id_cedula");
+
+// Mostrar info de campaña al seleccionar
+selectCampaña.addEventListener("change", function() {
+    const selectedId = parseInt(this.value);
+    const campaña = campañasInfo.find(c => c.id === selectedId);
+
+    if (campaña) {
+        infoDiv.style.display = "block";
+        document.getElementById("detalle").value = campaña.detalle;
+        document.getElementById("estado").value = campaña.estado;
+        document.getElementById("periodicidad").value = campaña.periodicidad;
+
+        // Formatear solo fecha y hora
+        if (campaña.fecha_creacion) {
+            const fecha = new Date(campaña.fecha_creacion);
+            const fechaFormateada = fecha.getFullYear() + '-' +
+                String(fecha.getMonth() + 1).padStart(2, '0') + '-' +
+                String(fecha.getDate()).padStart(2, '0') + ' ' +
+                String(fecha.getHours()).padStart(2, '0') + ':' +
+                String(fecha.getMinutes()).padStart(2, '0');
+            document.getElementById("fecha_creacion").value = fechaFormateada;
+        } else {
+            document.getElementById("fecha_creacion").value = "";
+        }
+
+        // Mostrar multimedia
+        const multimediaEl = document.getElementById("multimedia-container");
+        if (campaña.multimedia) {
+            multimediaEl.innerHTML = `<a href="${campaña.multimedia}" target="_blank" class="btn btn-link">Abrir archivo</a>`;
+        } else {
+            multimediaEl.innerHTML = `<span class="text-muted">No disponible</span>`;
+        }
+    } else {
+        infoDiv.style.display = "none";
+    }
+});
+
+// Llenar cédula automáticamente al seleccionar usuario
+selectUsuario.addEventListener("change", function() {
+    const selectedId = parseInt(this.value);
+    const usuario = usuariosInfo.find(u => u.id === selectedId);
+    inputCedula.value = usuario ? usuario.cedula : "";
+});
+</script>
+{% endblock %}

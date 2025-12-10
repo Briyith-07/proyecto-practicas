@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Roles{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center text-primary fw-bold mb-4">🎭 Gestión de Roles</h2>
+
+        <!-- Botón para crear un nuevo rol -->
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{% url 'crear_rol' %}" class="btn btn-success btn-lg">
+                <i class="bi bi-plus-circle"></i> Crear Rol
+            </a>
+        </div>
+
+        <h4 class="text-secondary text-center mb-4">📋 Roles Existentes</h4>
+
+        <div class="row">
+            {% for rol in roles %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-primary fw-bold">{{ rol.nombre }}</h5>
+                        <p class="card-text text-muted mb-3">
+                            <strong>Permisos:</strong><br>
+                            {% if rol.permisos.all %}
+                                {% for permiso in rol.permisos.all %}
+                                    {{ permiso.nombre }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                Sin permisos asignados.
+                            {% endif %}
+                        </p>
+                        <div class="mt-auto d-flex justify-content-between">
+                            <a href="{% url 'editar_rol' rol.id %}" class="btn btn-sm btn-warning">
+                                ✏️ Editar
+                            </a>
+                            <a href="{% url 'eliminar_rol' rol.id %}" class="btn btn-sm btn-danger">
+                                🗑️ Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">No hay roles registrados aún.</p>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                ⬅ Volver
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

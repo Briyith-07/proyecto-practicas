@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-warning text-dark rounded-top-4">
+            <h3 class="mb-0">✏️ Editar Notificación</h3>
+        </div>
+        <div class="card-body p-4">
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Título -->
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label fw-bold">Título:</label>
+                    <div class="col-sm-9">
+                        {{ form.titulo|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <!-- Usuario (nombre completo) -->
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label fw-bold">Usuario:</label>
+                    <div class="col-sm-9">
+                        {{ form.usuario|add_class:"form-select" }}
+                    </div>
+                </div>
+
+                <!-- Cédula -->
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label fw-bold">Cédula:</label>
+                    <div class="col-sm-9">
+                        {{ form.cedula|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <!-- Campaña (solo si NO es informativa) -->
+                {% if not informativa %}
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label fw-bold">Campaña:</label>
+                    <div class="col-sm-9">
+                        {{ form.campaña|add_class:"form-select" }}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Mensaje -->
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label fw-bold">Mensaje:</label>
+                    <div class="col-sm-9">
+                        {{ form.mensaje|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'listar_notificaciones' %}" class="btn btn-outline-secondary px-4">
+                        ← Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-success px-4">
+                        💾 Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

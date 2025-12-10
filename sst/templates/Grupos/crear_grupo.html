@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Grupo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Crear Grupo</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Nombre -->
+        <div class="mb-3">
+            <label for="id_nombre" class="form-label">Nombre</label>
+            <input type="text" name="nombre" id="id_nombre" 
+                   class="form-control {% if form.nombre.errors %}is-invalid{% endif %}"
+                   value="{{ form.nombre.value|default_if_none:'' }}">
+            {% if form.nombre.errors %}
+                <div class="invalid-feedback">
+                    Este campo es obligatorio.
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-3">
+            <label for="id_descripcion" class="form-label">Descripción</label>
+            <textarea name="descripcion" id="id_descripcion" rows="3"
+                      class="form-control {% if form.descripcion.errors %}is-invalid{% endif %}">{{ form.descripcion.value|default_if_none:'' }}</textarea>
+            {% if form.descripcion.errors %}
+                <div class="invalid-feedback">
+                    Este campo es obligatorio.
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Usuarios (opcional) -->
+        <div class="mb-3">
+            <label class="form-label">Usuarios</label>
+            {{ form.usuarios }}
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar Grupo</button>
+        <a href="{% url 'listar_grupos' %}" class="btn btn-secondary">Volver</a>
+    </form>
+</div>
+{% endblock %}

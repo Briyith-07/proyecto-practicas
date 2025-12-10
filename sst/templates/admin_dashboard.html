@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Panel de Administración{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Panel de Administración</h2>
+
+  <div class="row">
+
+    <!-- Usuarios -->
+    <div class="col-md-3 d-flex align-items-stretch mb-3">
+      <a href="{% url 'listar_usuarios' %}" class="text-decoration-none w-100">
+        <div class="card h-100" style="background-color:#0d6efd; color:#fff;">
+          <div class="card-body d-flex flex-column justify-content-center text-center">
+            <h5 class="card-title">Usuarios Registrados</h5>
+            <p class="card-text display-6">{{ usuarios }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Campañas Creadas -->
+    <div class="col-md-3 d-flex align-items-stretch mb-3">
+      <a href="{% url 'listar_campañas' %}" class="text-decoration-none w-100">
+        <div class="card h-100" style="background-color:#0dcaf0; color:#fff;">
+          <div class="card-body d-flex flex-column justify-content-center text-center">
+            <h5 class="card-title">Campañas Creadas</h5>
+            <p class="card-text display-6">{{ campañas }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Campañas -->
+    <div class="col-md-3 d-flex align-items-stretch mb-3">
+      <a href="{% url 'campanas_admin' %}" class="text-decoration-none w-100">
+        <div class="card h-100" style="background-color:#20c997; color:#fff;">
+          <div class="card-body d-flex flex-column justify-content-center text-center">
+            <h5 class="card-title">Campañas</h5>
+            <p class="card-text display-6">{{ campanas_asignadas }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="col-md-3 d-flex align-items-stretch mb-3">
+      <a href="{% url 'campañas_completas' %}" class="text-decoration-none w-100">
+        <div class="card h-100" style="background-color:#fbbe07; color:#fff;">
+          <div class="card-body d-flex flex-column justify-content-center text-center">
+            <h5 class="card-title">Estadísticas</h5>
+            <p class="card-text display-6"><i class="bi bi-graph-up"></i></p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Notificaciones -->
+    <div class="col-md-3 d-flex align-items-stretch mb-3">
+      <a href="{% url 'listar_notificaciones' %}" class="text-decoration-none w-100">
+        <div class="card h-100" style="background-color:#198754; color:#fff;">
+          <div class="card-body d-flex flex-column justify-content-center text-center">
+            <h5 class="card-title">Notificaciones</h5>
+            <p class="card-text display-6">{{ notificaciones }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Grupos -->
+    <div class="col-md-3 d-flex align-items-stretch mb-3">
+      <a href="{% url 'listar_grupos' %}" class="text-decoration-none w-100">
+        <div class="card h-100" style="background-color:#6c757d; color:#fff;">
+          <div class="card-body d-flex flex-column justify-content-center text-center">
+            <h5 class="card-title">Grupos</h5>
+            <p class="card-text display-6">{{ grupos }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Roles y Permisos -->
+    <div class="col-md-3 d-flex align-items-stretch mb-3">
+      <a href="{% url 'listar_roles' %}" class="text-decoration-none w-100">
+        <div class="card h-100" style="background-color:#6f42c1; color:#fff;">
+          <div class="card-body d-flex flex-column justify-content-center text-center">
+            <h5 class="card-title">Roles y Permisos</h5>
+            <p class="card-text display-6">{{ roles }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Recursos SST -->
+    <div class="col-md-3 d-flex align-items-stretch mb-3">
+      <a href="{% url 'recursos_sst_admin' %}" class="text-decoration-none w-100">
+        <div class="card h-100" style="background-color:#fd778b; color:#fff;">
+          <div class="card-body d-flex flex-column justify-content-center text-center">
+            <h5 class="card-title">Recursos SST</h5>
+            <p class="card-text display-6">{{ recursos_count }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Mensajes -->
+    <div class="col-md-3 d-flex align-items-stretch mb-3">
+      <a href="{% url 'panel_mensajes' %}" class="text-decoration-none w-100">
+        <div class="card h-100" style="background-color:#d669f2; color:#fff;">
+          <div class="card-body d-flex flex-column justify-content-center text-center">
+            <h5 class="card-title">Mensajes</h5>
+            <p class="card-text display-6">{{ mensajes }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

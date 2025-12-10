@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center">Panel de Administración</h2>
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Usuarios Registrados</h5>
+          <p class="card-text display-6">{{ total_usuarios }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Campañas Activas</h5>
+          <p class="card-text display-6">{{ campañas_activas }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-info mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Campañas Completadas</h5>
+          <p class="card-text display-6">{{ campañas_completadas }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

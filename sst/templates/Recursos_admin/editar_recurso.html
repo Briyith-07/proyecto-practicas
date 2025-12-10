@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Editar Recurso{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4 text-center text-primary">✏️ Editar Recurso</h2>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Información del Recurso</h5>
+    </div>
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" class="row g-4">
+        {% csrf_token %}
+
+        <!-- Título -->
+        <div class="col-md-6">
+          <label for="{{ form.titulo.id_for_label }}" class="form-label fw-bold">Título</label>
+          {{ form.titulo|as_crispy_field }}
+        </div>
+
+        <!-- Tipo -->
+        <div class="col-md-6">
+          <label for="{{ form.tipo.id_for_label }}" class="form-label fw-bold">Tipo</label>
+          {{ form.tipo|as_crispy_field }}
+        </div>
+
+        <!-- Descripción -->
+        <div class="col-12">
+          <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">Descripción</label>
+          {{ form.descripcion|as_crispy_field }}
+        </div>
+
+        <!-- Archivo -->
+        <div class="col-12">
+          <label for="{{ form.archivo.id_for_label }}" class="form-label fw-bold">Archivo Actual</label>
+          {% if recurso.archivo %}
+            <p>
+              <a href="{{ recurso.archivo.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                📎 Ver Archivo
+              </a>
+            </p>
+          {% else %}
+            <p class="text-muted">No hay archivo subido.</p>
+          {% endif %}
+          <label class="form-label fw-bold mt-2">Actualizar Archivo</label>
+          {{ form.archivo|as_crispy_field }}
+        </div>
+
+        <!-- Botones -->
+        <div class="col-12 d-flex justify-content-center gap-3 mt-3">
+          <button type="submit" class="btn btn-success btn-lg">Actualizar Recurso</button>
+          <a href="{% url 'recursos_sst_admin' %}" class="btn btn-secondary btn-lg">Cancelar</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

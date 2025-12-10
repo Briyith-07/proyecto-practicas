@@ -1,0 +1,141 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema SST</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #1c1f23;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo::before {
+            content: "🛡️";
+            font-size: 1.3rem;
+        }
+
+        .top-nav a {
+            margin-left: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 6px 14px;
+            border-radius: 4px;
+            color: #ccc;
+        }
+
+        .top-nav a:hover {
+            color: white;
+        }
+
+        .top-nav a.active {
+            color: white;
+            font-weight: bold;
+            border-bottom: 2px solid white;
+        }
+
+        .hero {
+        background: url("/multimedia/fondo_inicio.jpg") no-repeat center center;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: #f8f9fa;  
+        min-height: 60vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;    
+        text-align: center;
+        padding: 20px;
+        }
+
+        .hero-content {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 10px;
+            color: white;
+            width: 90%;
+            max-width: 700px;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px 10px;
+            font-size: 0.9rem;
+            margin-top: auto; /* empuja el footer al final */
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 6vw;
+            }
+
+            .hero-content p {
+                font-size: 4.5vw;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <header>
+        <div class="logo">Sistema SST</div>
+        <div class="top-nav">
+            <a href="#" class="active">Inicio</a>
+            <a href="{% url 'login' %}">Iniciar Sesión</a>
+            <a href="{% url 'registro' %}">Registrarse</a>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Bienvenido al Sistema SST</h1>
+            <p>Gestiona tus actividades de Seguridad y Salud en el Trabajo de forma eficiente y profesional.</p>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 - SST
+    </footer>
+
+</div>
+</body>
+</html>

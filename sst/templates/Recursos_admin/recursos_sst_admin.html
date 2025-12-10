@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Recursos SST - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">📂 Recursos SST</h2>
+
+  <!-- Filtros -->
+  <form method="get" class="row g-3 mb-4 align-items-end">
+
+      <div class="col-md-3">
+        <label class="form-label fw-bold">Título</label>
+        <select name="titulo" class="form-select">
+            <option value="">-- Todos --</option>
+            {% for item in recursos %}
+            <option value="{{ item.titulo }}" {% if request.GET.titulo == item.titulo %}selected{% endif %}>
+                {{ item.titulo }}
+            </option>
+            {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label fw-bold">Tipo</label>
+        <select name="tipo" class="form-select">
+            <option value="">-- Todos --</option>
+            <option value="documento" {% if request.GET.tipo == "documento" %}selected{% endif %}>Documento</option>
+            <option value="imagen" {% if request.GET.tipo == "imagen" %}selected{% endif %}>Imagen</option>
+            <option value="video" {% if request.GET.tipo == "video" %}selected{% endif %}>Video</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label fw-bold">Fecha Desde</label>
+        <input type="date" name="fecha_desde" class="form-control" value="{{ request.GET.fecha_desde }}">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label fw-bold">Fecha Hasta</label>
+        <input type="date" name="fecha_hasta" class="form-control" value="{{ request.GET.fecha_hasta }}">
+      </div>
+
+      <!-- Botones alineados en la misma fila -->
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-primary flex-fill">Filtrar</button>
+        <a href="{% url 'recursos_sst_admin' %}" class="btn btn-secondary flex-fill">Limpiar</a>
+      </div>
+
+  </form>
+
+  <!-- Botón Crear Recurso -->
+  <div class="d-flex justify-content-end mb-3">
+    <a href="{% url 'crear_recurso' %}" class="btn btn-success">Crear Recurso</a>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      {% if recursos %}
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover align-middle text-center">
+          <thead class="table-dark align-middle">
+            <tr>
+              <th>#</th>
+              <th>Título</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+              <th>Archivo</th>
+              <th>Fecha Subida</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for recurso in recursos %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ recurso.titulo }}</td>
+              <td>{{ recurso.tipo|capfirst }}</td>
+              <td>{{ recurso.descripcion|default:"-" }}</td>
+              <td>
+                {% if recurso.archivo %}
+                  <a href="{{ recurso.archivo.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                    Ver Recurso
+                  </a>
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td>{{ recurso.fecha_subida|date:"d/m/Y H:i" }}</td>
+              <td class="text-nowrap">
+                <div class="d-flex gap-1 justify-content-center">
+                  <a href="{% url 'editar_recurso' recurso.pk %}" class="btn btn-sm btn-primary">Editar</a>
+
+                  <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalEliminar{{ recurso.pk }}">
+                    Eliminar
+                  </button>
+
+                  <!-- Modal de confirmación de eliminación -->
+                  <div class="modal fade" id="modalEliminar{{ recurso.pk }}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content border-danger">
+                        <div class="modal-header bg-danger text-white">
+                          <h5 class="modal-title">Confirmar Eliminación</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                          ¿Estás seguro de eliminar el recurso <strong>{{ recurso.titulo }}</strong>?
+                        </div>
+                        <div class="modal-footer">
+                          <form method="post" action="{% url 'eliminar_recurso' recurso.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </td>
+
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p class="text-center text-muted">No hay recursos disponibles.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="/panel/dashboard/" class="btn btn-secondary">Volver</a>
+  </div>
+</div>
+{% endblock %}

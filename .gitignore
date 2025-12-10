@@ -1,0 +1,28 @@
+# Python
+*.pyc
+__pycache__/
+
+# Entorno virtual
+venv/
+.env
+*.env
+
+# Archivos multimedia pesados
+*.mp4
+*.avi
+*.mov
+media/
+sst/multimedia/
+campañas/
+
+# Base de datos local
+*.sqlite3
+*.log
+
+# Archivos de editores
+.vscode/
+.idea/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db

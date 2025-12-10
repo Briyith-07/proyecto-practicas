@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Crear Recurso SST{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4 text-primary">📂 Crear Nuevo Recurso SST</h2>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" class="row g-3">
+        {% csrf_token %}
+        <!-- Título -->
+        <div class="col-md-12">
+          {{ form.titulo|as_crispy_field }}
+        </div>
+        <!-- Tipo -->
+        <div class="col-md-12">
+          {{ form.tipo|as_crispy_field }}
+        </div>
+        <!-- Archivo -->
+        <div class="col-md-12">
+          {{ form.archivo|as_crispy_field }}
+        </div>
+        <!-- Descripción (opcional) -->
+        <div class="col-md-12">
+          {{ form.descripcion|as_crispy_field }}
+        </div>
+        <!-- Botones -->
+        <div class="col-12 text-center mt-3">
+          <button type="submit" class="btn btn-success btn-lg">Crear Recurso</button>
+          <a href="{% url 'recursos_sst_admin' %}" class="btn btn-secondary btn-lg ms-2">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

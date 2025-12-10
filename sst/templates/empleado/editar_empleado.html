@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="mb-4 text-center">Editar Perfil</h2>
+
+        <!-- Campos no editables -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <label class="form-label fw-bold">Nombre</label>
+                <input type="text" class="form-control" value="{{ usuario.first_name }}" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label fw-bold">Apellido</label>
+                <input type="text" class="form-control" value="{{ usuario.last_name }}" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label fw-bold">Cédula</label>
+                <input type="text" class="form-control" value="{{ usuario.cedula }}" readonly>
+            </div>
+        </div>
+
+        <!-- Formulario editable -->
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Correo -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Correo</label>
+                {{ form.email|add_class:"form-control" }}
+            </div>
+
+            <!-- Dirección -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Dirección</label>
+                {{ form.direccion|add_class:"form-control" }}
+            </div>
+
+            <div class="row">
+                <!-- Teléfono -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Teléfono</label>
+                    {{ form.telefono|add_class:"form-control" }}
+                </div>
+
+                <!-- Departamento -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Departamento</label>
+                    <select name="departamento" id="departamento" class="form-select">
+                        <option value="">Seleccione un departamento</option>
+                        {% for d in departamentos %}
+                            <option value="{{ d }}" {% if form.departamento.value == d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Ciudad -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Ciudad</label>
+                <select name="ciudad" id="ciudad" class="form-select"></select>
+            </div>
+
+            <!-- Botones -->
+            
+<div class="d-flex justify-content-center gap-3 mt-4">
+    <a href="{% url 'dashboard_empleado' %}" class="btn btn-secondary">Cancelar</a>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</div>
+        </form>
+    </div>
+</div>
+
+<!-- Script para ciudades dependientes -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const deptSelect = document.getElementById("departamento");
+    const ciudadSelect = document.getElementById("ciudad");
+    const ciudadesPorDepartamento = {{ ciudades_por_departamento|safe }};
+
+    function actualizarCiudades() {
+        const dept = deptSelect.value;
+        ciudadSelect.innerHTML = '';
+        if (ciudadesPorDepartamento[dept]) {
+            ciudadSelect.disabled = false;
+            ciudadSelect.appendChild(new Option("Seleccione una ciudad", ""));
+            ciudadesPorDepartamento[dept].forEach(function(ciudad){
+                const opt = new Option(ciudad, ciudad);
+                if (ciudad === "{{ form.ciudad.value|default:usuario.perfil.ciudad }}") opt.selected = true;
+                ciudadSelect.appendChild(opt);
+            });
+        } else {
+            ciudadSelect.disabled = true;
+            ciudadSelect.appendChild(new Option("Seleccione una ciudad", ""));
+        }
+    }
+
+    deptSelect.addEventListener("change", actualizarCiudades);
+    actualizarCiudades();
+});
+</script>
+{% endblock %}

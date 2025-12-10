@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% block title %}Campañas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4 fw-bold text-primary">📋 Campañas</h2>
+
+  <!-- Tabla de Campañas -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-info text-white text-center">
+      Campañas Creadas
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table id="tablaCampañas" class="table table-bordered table-hover align-middle text-center m-0">
+          <thead class="table-light">
+            <tr class="text-center">
+              <th>ID</th>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Multimedia</th>
+              <th>Evidencia</th>
+              <th>Estado</th>
+              <th>Periodicidad</th>
+              <th>Asignado a</th>
+              <th>Fecha de Creación</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for campaña in campañas %}
+            <tr class="text-center">
+              <td>{{ campaña.id }}</td>
+              <td>{{ campaña.codigo.codigo }}</td>
+              <td>{{ campaña.codigo.nombre }}</td>
+
+              <td>
+                {% if campaña.multimedia %}
+                  <a href="{{ campaña.multimedia.url }}" target="_blank">Ver recurso</a>
+                {% else %}
+                  <span class="text-muted">No aplica</span>
+                {% endif %}
+              </td>
+
+              <td>
+                {% if campaña.evidencia_requerida %}
+                  <span class="badge bg-info">Sí</span>
+                {% else %}
+                  <span class="badge bg-light text-dark">No</span>
+                {% endif %}
+              </td>
+
+              <!-- Estado -->
+              <td>
+                {% if campaña.estado == 'activa' %}
+                  <span class="badge bg-success">Activa</span>
+                {% elif campaña.estado == 'pausada' %}
+                  <span class="badge bg-warning text-dark">Pausada</span>
+                {% elif campaña.estado == 'por_aprobacion' %}
+                  <span class="badge bg-info text-dark">Por aprobación</span>
+                {% elif campaña.estado == 'finalizada' %}
+                  <span class="badge bg-secondary">Finalizada</span>
+                {% elif campaña.estado == 'rechazada' %}
+                  <span class="badge bg-danger">Rechazada</span>
+                {% else %}
+                  <span class="badge bg-light text-dark">{{ campaña.estado }}</span>
+                {% endif %}
+              </td>
+
+              <td>{{ campaña.periodicidad }}</td>
+
+              <!-- Nueva columna de asignación única -->
+              <td>
+                {% if campaña.grupos.all.count > 0 %}
+                    <!-- Si tiene grupo, mostrar solo el nombre -->
+                    {{ campaña.grupos.all.first.nombre }}
+
+                {% else %}
+                    {% with empleados=campaña.campanaasignada_set.all %}
+                        {% if empleados.count == 0 %}
+                            <span class="text-muted">Sin asignación</span>
+
+                        {% elif empleados.count == 1 %}
+                            {{ empleados.first.empleado.first_name }} {{ empleados.first.empleado.last_name }}
+
+                        {% else %}
+                            Múltiples empleados
+                        {% endif %}
+                    {% endwith %}
+
+                {% endif %}
+              </td>
+
+              <td>{{ campaña.fecha_creacion|date:"Y-m-d H:i" }}</td>
+            </tr>
+            {% empty %}
+              <tr><td colspan="9" class="text-center text-muted">No hay campañas.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico -->
+  <div class="d-flex justify-content-end mb-2">
+    <select id="filtroGrafica" class="form-select w-auto">
+      <option value="periodicidad">📅 Periocidad</option>
+      <option value="nombre">🏷️ Nombre de campaña</option>
+      <option value="estado">⚡ Estado</option>
+    </select>
+  </div>
+
+  <div class="card mt-4 shadow-sm p-4">
+    <h5 class="mb-3 text-center">📊 Resumen de campañas Creadas</h5>
+    <canvas id="graficoAsignaciones" height="100"></canvas>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="/estadisticas/campañas/" class="btn btn-secondary">⬅️ Volver</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  function normalizarEstado(estado) {
+    return estado.toLowerCase().replace("ó", "o").replace(" ", "_").trim();
+  }
+
+  function obtenerDatosDesdeTabla() {
+    const filas = document.querySelectorAll("#tablaCampañas tbody tr");
+    const datos = [];
+
+    filas.forEach(fila => {
+      const celdas = fila.children;
+
+      datos.push({
+        nombre: celdas[2].innerText.trim(),
+        estado: normalizarEstado(celdas[5].innerText.trim()),
+        periodicidad: celdas[6].innerText.trim()
+      });
+    });
+
+    return datos;
+  }
+
+  const datosOriginales = obtenerDatosDesdeTabla();
+
+  function agruparPor(campo) {
+    const conteo = {};
+
+    datosOriginales.forEach(item => {
+      const key = item[campo] || "Sin dato";
+      conteo[key] = (conteo[key] || 0) + 1;
+    });
+
+    return {
+      labels: Object.keys(conteo),
+      datos: Object.values(conteo)
+    };
+  }
+
+  let agrupado = agruparPor("periodicidad");
+
+  const ctx = document.getElementById('graficoAsignaciones');
+  let grafico = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: agrupado.labels,
+      datasets: [{
+        label: 'Cantidad',
+        data: agrupado.datos,
+        backgroundColor: '#4FC3F7',
+        borderColor: '#0288D1',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Gráfica por Periocidad' }
+      },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+  document.getElementById("filtroGrafica").addEventListener("change", function () {
+    const campo = this.value;
+
+    const nombres = {
+      periodicidad: "Periocidad",
+      nombre: "Nombre de campaña",
+      estado: "Estado"
+    };
+
+    const nuevo = agruparPor(campo);
+
+    grafico.data.labels = nuevo.labels;
+    grafico.data.datasets[0].data = nuevo.datos;
+    grafico.options.plugins.title.text = "Gráfica por " + nombres[campo];
+
+    grafico.update();
+  });
+</script>
+
+{% endblock %}

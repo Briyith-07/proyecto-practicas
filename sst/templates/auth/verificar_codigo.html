@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Verificar Código{% endblock %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+  <div class="card p-4 shadow" style="width: 100%; max-width: 400px;">
+    <h4 class="text-center mb-3 text-primary fw-bold">🔐 Verificar Código</h4>
+    <p class="text-center text-muted mb-4">Ingresa el código enviado a tu correo electrónico</p>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} text-center py-2">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="correo" value="{{ correo }}">
+
+      <div class="mb-3">
+        <label class="fw-semibold">Código:</label>
+        <input type="text" name="codigo" class="form-control" placeholder="Ej: 123456" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 mt-2">Verificar</button>
+    </form>
+
+    <a href="{% url 'login' %}" class="btn btn-secondary w-100 mt-3"> Volver</a>
+  </div>
+</div>
+{% endblock %}

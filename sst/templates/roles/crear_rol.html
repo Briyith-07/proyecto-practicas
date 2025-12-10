@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Rol{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-primary text-white py-3 rounded-top text-center">
+            <h4 class="mb-0">🎭 Crear Rol</h4>
+        </div>
+
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="{{ form.nombre.id_for_label }}">Nombre del Rol:</label>
+                    {{ form.nombre }}
+                </div>
+
+                <h5 class="text-primary mb-3">Permisos</h5>
+
+                <div class="accordion" id="permisosAccordion">
+                    {% for categoria, lista_permisos in categorias.items %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                                {{ categoria }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#permisosAccordion">
+                            <div class="accordion-body">
+                                {% for permiso in permisos %}
+                                    {% if permiso.nombre in lista_permisos %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="permisos" value="{{ permiso.id }}" id="perm_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                                        <label class="form-check-label" for="perm_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">{{ permiso.nombre }}</label>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mt-4 text-center">
+                    <button type="submit" class="btn btn-primary me-2">Crear Rol</button>
+                    <a href="{% url 'listar_roles' %}" class="btn btn-outline-secondary">⬅ Volver</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

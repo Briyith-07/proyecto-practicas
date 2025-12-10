@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% block title %}Detalle de Campaña Realizada{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background: #f3f6fa;
+  }
+
+  .detalle-campaña-card {
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    padding: 40px 35px;
+    max-width: 850px;
+    margin: auto;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .detalle-campaña-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .detalle-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .detalle-header h2 {
+    color: #0d6efd;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .detalle-header p {
+    color: #6c757d;
+    font-size: 0.95rem;
+  }
+
+  .detalle-header img {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 10px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .info-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px 25px;
+    margin-bottom: 20px;
+    border-left: 5px solid #0d6efd;
+  }
+
+  .info-section .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .info-section .info-row:last-child {
+    border-bottom: none;
+  }
+
+  .info-section .label {
+    font-weight: 600;
+    color: #212529;
+    width: 40%;
+  }
+
+  .info-section .value {
+    width: 60%;
+    color: #555;
+  }
+
+  .alert {
+    border-radius: 12px;
+    font-size: 0.95rem;
+    padding: 15px 20px;
+    border: none;
+  }
+
+  .btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn:hover {
+    transform: scale(1.05);
+  }
+
+  .btn-outline-dark,
+  .btn-outline-primary {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+
+  .badge {
+    font-size: 0.9rem;
+    padding: 7px 12px;
+    border-radius: 10px;
+  }
+
+  .volver-container {
+    text-align: center;
+    margin-top: 30px;
+  }
+
+  .volver-container .btn-secondary {
+    font-size: 0.85rem;
+    border-radius: 8px;
+    padding: 6px 18px;
+  }
+
+  .divider {
+    height: 2px;
+    background: linear-gradient(to right, #0d6efd, transparent);
+    border-radius: 5px;
+    margin: 25px 0;
+  }
+</style>
+
+<div class="container mt-5">
+  <div class="detalle-campaña-card">
+    <div class="detalle-header">
+      <img src="https://cdn-icons-png.flaticon.com/512/1055/1055646.png" alt="Casco SST">
+      <h2>✅ Detalle de la Campaña Realizada</h2>
+      <p>Consulta toda la información sobre esta campaña y la evidencia asociada</p>
+    </div>
+
+    <!-- Información general -->
+    <div class="info-section">
+      <div class="info-row">
+        <div class="label">📘 Código:</div>
+        <div class="value">{{ campaña.codigo.codigo }}</div>
+      </div>
+      <div class="info-row">
+        <div class="label">🏷️ Nombre:</div>
+        <div class="value">{{ campaña.nombre }}</div>
+      </div>
+      <div class="info-row">
+        <div class="label">📝 Descripción:</div>
+        <div class="value">{{ campaña.detalle }}</div>
+      </div>
+      <div class="info-row">
+        <div class="label">⏳ Periodicidad:</div>
+        <div class="value">{{ campaña.periodicidad }}</div>
+      </div>
+
+      <!-- Estado con íconos -->
+      <div class="info-row">
+        <div class="label">📊 Estado actual:</div>
+        <div class="value">
+          {% if campaña.estado == 'activa' %}
+            <span class="badge bg-success">🟢 Activa</span>
+          {% elif campaña.estado == 'pausada' %}
+            <span class="badge bg-warning text-dark">🟡 Pausada</span>
+          {% elif campaña.estado == 'por_aprobacion' %}
+            <span class="badge bg-info text-dark">🟣 En revisión</span>
+          {% elif campaña.estado == 'finalizada' %}
+            <span class="badge bg-secondary">⚪ Finalizada</span>
+          {% else %}
+            <span class="badge bg-light text-dark">⚫ Desconocido</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Multimedia o recurso -->
+    {% if campaña.recurso or campaña.multimedia %}
+      <div class="alert alert-secondary">
+        <strong>🎥 Archivos disponibles:</strong><br>
+
+        {% if campaña.recurso %}
+          <a href="{{ campaña.recurso.url }}" target="_blank" class="btn btn-outline-dark mt-2">
+            📎 Ver recurso
+          </a><br>
+        {% endif %}
+
+        {% if campaña.multimedia %}
+          <a href="{{ campaña.multimedia.url }}" target="_blank" class="btn btn-outline-dark mt-2">
+            🎬 Ver multimedia
+          </a>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="alert alert-light border text-center">
+        <strong>Esta campaña no tiene archivo multimedia adjunto.</strong>
+      </div>
+    {% endif %}
+
+    <!-- Evidencia -->
+    {% if evidencia %}
+      <div class="alert alert-info mt-4">
+        <strong>📤 Evidencia del empleado:</strong><br>
+        <a href="{{ evidencia.archivo.url }}" target="_blank" class="btn btn-outline-primary mt-2">
+          📎 Ver evidencia
+        </a>
+        <p class="mt-2">
+          <small>📅 Subida el: {{ evidencia.fecha_subida|date:"Y-m-d H:i" }}</small>
+        </p>
+      </div>
+    {% else %}
+      <div class="alert alert-warning mt-4 text-center">
+        <strong>⚠️ No has subido evidencia para esta campaña.</strong>
+      </div>
+    {% endif %}
+
+    <div class="volver-container">
+      <a href="{% url 'campanas_asignadas' %}" class="btn btn-secondary">
+        ⬅️ Volver a mis campañas
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

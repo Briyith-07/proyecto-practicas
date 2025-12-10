@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Mis Campañas Realizadas{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4">✅ Mis Campañas Realizadas</h2>
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <table class="table table-striped table-hover m-0">
+        <thead class="table-dark">
+          <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Detalle</th>
+            <th>Estado</th>
+            <th>Periodicidad</th>
+            <th>Fecha de Realización</th>
+            <th>Evidencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in evidencias %}
+          <tr>
+            <td>{{ e.campaña.codigo.codigo }}</td>
+            <td>{{ e.campaña.nombre }}</td>
+            <td>{{ e.campaña.detalle }}</td>
+            <td><span class="badge bg-success">{{ e.campaña.estado|title }}</span></td>
+            <td>{{ e.campaña.periodicidad }}</td>
+            <td>{{ e.fecha_subida|date:"Y-m-d H:i" }}</td>
+            <td>
+              {% if e.archivo %}
+              <a href="{{ e.archivo.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                📎 Ver evidencia
+              </a>
+              {% else %}
+              <span class="text-muted">Sin archivo</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center">Aún no has realizado campañas.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="text-center mt-3">
+    <a href="{% url 'campanias_asignadas' %}" class="btn btn-secondary">⬅️ Volver a mis campañas</a>
+  </div>
+</div>
+{% endblock %}

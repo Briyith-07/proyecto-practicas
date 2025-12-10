@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Nueva Campaña Asignada</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f8;
+        color: #333;
+        padding: 0;
+        margin: 0;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 30px auto;
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 25px;
+        border: 1px solid #e1e4e8;
+        box-shadow: 0px 5px 20px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+        color: #0d6efd;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .detalle-box {
+        background: #f8fafc;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 5px solid #0d6efd;
+        margin-bottom: 20px;
+    }
+
+    .detalle-box p {
+        margin: 6px 0;
+        font-size: 15px;
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 13px;
+        color: #666;
+        margin-top: 25px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>📢 Nueva Campaña Asignada</h2>
+
+    <p>Hola <strong>{{ empleado }}</strong>,</p>
+
+    <p>Has recibido una nueva campaña. Aquí tienes los detalles:</p>
+
+    <div class="detalle-box">
+        <p><strong>📌 Nombre:</strong> {{ nombre_campaña }}</p>
+        <p><strong>🆔 Código:</strong> {{ codigo_campaña }}</p>
+        <p><strong>📅 Periodicidad:</strong> {{ periodicidad }}</p>
+        <p><strong>🕒 Fecha de creación:</strong> {{ fecha_creacion }}</p>
+        <p><strong>⏳ Fecha de vencimiento:</strong> {{ fecha_vencimiento }}</p>
+    </div>
+
+    <p>Por favor ingresa al sistema para más información.</p>
+
+    <div class="footer">
+       © 2025 SG-SST Sistema de Seguridad y salud en el Trabajo y Pausas Activas<br>
+        <small>Este es un mensaje automático, por favor no responder.</small>
+    </div>
+
+</div>
+
+</body>
+</html>

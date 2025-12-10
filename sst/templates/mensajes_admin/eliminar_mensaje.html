@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Eliminar Mensaje{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h4 class="card-title text-danger">Confirmar eliminación</h4>
+      <p>¿Estás seguro(a) que deseas eliminar el mensaje:</p>
+
+      <div class="mb-3">
+        <h5>{{ mensaje.titulo }}</h5>
+        <p class="text-muted">{{ mensaje.contenido }}</p>
+        <small class="text-muted">Creado: {{ mensaje.creado|date:"d/m/Y H:i" }}</small>
+      </div>
+
+      <form method="post" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+      </form>
+
+      <a href="{% url 'listar_mensajes' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Detalle del Mensaje{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="card shadow-lg border-0 rounded-3">
+        <!-- Header de la tarjeta -->
+        <div class="card-header bg-primary text-white py-3 rounded-top text-center">
+            <h4 class="mb-0">💬 Detalle del Mensaje</h4>
+        </div>
+
+        <div class="card-body">
+
+            <!-- Título del mensaje -->
+            <div class="mb-3">
+                <p><strong>Título:</strong> {{ mensaje.titulo }}</p>
+            </div>
+
+            <!-- Contenido -->
+            <div class="mb-3">
+                <p><strong>Contenido:</strong></p>
+                <div class="p-3 bg-light border rounded">
+                    {{ mensaje.contenido }}
+                </div>
+            </div>
+
+            <!-- Fecha del evento -->
+            {% if mensaje.fecha_evento %}
+            <div class="mb-3">
+                <p><strong>📅 Fecha del evento:</strong> {{ mensaje.fecha_evento|date:"d/m/Y H:i" }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Fecha de publicación -->
+            <p class="text-muted mt-3 text-end">
+                Publicado: {{ mensaje.creado|date:"d/m/Y H:i" }}
+            </p>
+
+            <!-- Botón de volver -->
+            <div class="mt-4 text-center">
+                <a href="{% url 'mensajes_empleado' %}" class="btn btn-outline-primary px-4">
+                    ⬅ Volver a Mensajes
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
