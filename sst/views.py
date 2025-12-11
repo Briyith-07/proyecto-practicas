@@ -1175,7 +1175,7 @@ def crear_grupo(request):
             return redirect('listar_grupos') 
     else:
         form = GrupoForm()
-    return render(request, 'grupos/crear_grupo.html', {'form': form})
+    return render(request, 'Grupos/crear_grupo.html', {'form': form})
 
 @user_passes_test(lambda u: u.is_superuser)
 def editar_grupo(request, id):
@@ -1188,7 +1188,7 @@ def editar_grupo(request, id):
             return redirect('listar_grupos')
     else:
         form = GrupoForm(instance=grupo)
-    return render(request, 'grupos/editar_grupo.html', {'form': form, 'grupo': grupo})
+    return render(request, 'Grupos/editar_grupo.html', {'form': form, 'grupo': grupo})
 
 @user_passes_test(lambda u: u.is_superuser)
 
@@ -1198,7 +1198,7 @@ def eliminar_grupo(request, id):
         grupo.delete()
         messages.warning(request, "Grupo eliminado.")
         return redirect('listar_grupos')
-    return render(request, 'grupos/eliminar_grupo.html', {'grupo': grupo})
+    return render(request, 'Grupos/eliminar_grupo.html', {'grupo': grupo})
 
 
 #Notificaciones admin#
