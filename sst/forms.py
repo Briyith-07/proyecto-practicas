@@ -320,7 +320,7 @@ class NotificacionForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_campaña'})
     )
     usuario = forms.ModelChoiceField(
-        queryset=Usuario.objects.filter(is_active=True, rol__nombre="empleado"),
+        queryset=Usuario.objects.filter(is_active=True, rol__nombre="Empleado"),
         empty_label="Seleccione un usuario",
         widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_usuario'})
 )
