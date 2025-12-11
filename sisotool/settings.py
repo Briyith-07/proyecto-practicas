@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'sst.apps.SstConfig', 
     'widget_tweaks',
     'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 MIDDLEWARE = [
@@ -126,3 +127,5 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 
 ALLOWED_HOSTS = ['web-production-f158c.up.railway.app']
 CSRF_TRUSTED_ORIGINS = ['http://*','https://web-production-f158c.up.railway.app']
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
