@@ -125,3 +125,4 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 
 ALLOWED_HOSTS = ['web-production-f158c.up.railway.app']
+CSRF_COOKIE_DOMAIN = 'https://web-production-f158c.up.railway.app/'
