@@ -124,13 +124,8 @@ class Campaña(models.Model):
         null=True,
         verbose_name="Estado actual"
     )
-
-    # Archivos guardados en la base de datos
-    recurso = models.BinaryField(null=True, blank=True)
-    recurso_nombre = models.CharField(max_length=255, null=True, blank=True)
-    multimedia = models.BinaryField(null=True, blank=True)
-    multimedia_nombre = models.CharField(max_length=255, null=True, blank=True)
-
+    recurso = models.FileField(upload_to='campañas/', null=True, blank=True)
+    multimedia = models.FileField(upload_to='campañas/', blank=True, null=True)
     periodicidad = models.CharField(
         max_length=20,
         choices=PERIODICIDADES,
