@@ -2152,7 +2152,7 @@ def detalle_notificacion_empleado(request, pk):
         # Si no tiene campaña, es un mensaje informativo
         es_mensaje = True
 
-    return render(request, "notificaciones_empleados/detalle_notificacion_empleado.html", {
+    return render(request, "Notificaciones_empleados/detalle_notificacion_empleado.html", {
         "notificacion": notificacion,
         "campaña": campaña,
         "asignacion": asignacion,
