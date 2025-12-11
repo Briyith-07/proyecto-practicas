@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Crear Campaña{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow p-4">
+    <h2 class="text-center mb-4">Crear Nueva Campaña</h2>
+
+    {% if form.errors %}
+      <div class="alert alert-danger">
+        <ul class="mb-0">
+          {% for field in form %}
+            {% for error in field.errors %}
+              <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.codigo.label_tag }}
+          {{ form.codigo }}
+        </div>
+
+        <div class="col-md-12 mb-3">
+          {{ form.detalle.label_tag }}
+          {{ form.detalle }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          {{ form.periodicidad.label_tag }}
+          {{ form.periodicidad }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          {{ form.multimedia.label_tag }}
+          {{ form.multimedia }}
+        </div>
+
+        <!-- 🔹 Campo: Asignar a empleado -->
+        <div class="col-md-6 mb-3">
+          <label for="id_empleado"><strong>Asignar a un Empleado</strong></label>
+          {{ form.empleado }}
+        </div>
+
+        <!-- 🔹 Campo: Asignar a grupo -->
+        <div class="col-md-6 mb-3">
+          <label for="id_grupos"><strong>Asignar a un Grupo</strong></label>
+          {{ form.grupos }}
+        </div>
+
+        <div class="col-md-12">
+          <small class="text-muted">
+            ⚠ Solo debes seleccionar <strong>un empleado</strong> o <strong>un grupo</strong>, no ambos.
+          </small>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success w-100">💾 Guardar Campaña</button>
+      </div>
+
+      <div class="text-center mt-3">
+        <a href="{% url 'listar_campañas' %}" class="btn btn-secondary">⬅ Volver</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar Campaña{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-3 text-danger">¿Estás seguro de que deseas eliminar esta campaña?</h2>
+  
+  <p><strong>Código:</strong> {{ campaña.codigo }}</p>
+  <p><strong>Detalle:</strong> {{ campaña.detalle }}</p>
+
+  <div class="alert alert-danger" role="alert">
+    <strong>¡Advertencia!</strong> Esta acción no se puede deshacer.
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    <a href="{% url 'listar_campañas' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

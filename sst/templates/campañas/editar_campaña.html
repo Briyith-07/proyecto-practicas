@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block title %}Editar Campaña{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg rounded-4 p-4 mx-auto" style="max-width: 900px; background-color: #fefefe;">
+    <h2 class="text-center text-primary mb-4">
+      <i class="bi bi-pencil-square me-2"></i>Editar Campaña
+    </h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger shadow-sm">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <!-- Campos en dos columnas -->
+      <div class="row g-4">
+        {% for field in form %}
+          {% if field.name != "evidencia_requerida" %}
+            <div class="col-md-6">
+              <label for="{{ field.id_for_label }}" class="form-label fw-bold text-secondary">
+                {{ field.label }}
+              </label>
+
+              <!-- Campo multimedia -->
+              {% if field.name == "multimedia" %}
+                <div class="mb-1">
+                  {% if campaña.multimedia %}
+                    <small class="text-muted d-block mb-1">
+                      Actualmente: 
+                      <a href="{{ campaña.multimedia.url }}" target="_blank">{{ campaña.multimedia.name|truncatechars:50 }}</a>
+                      <a href="{{ campaña.multimedia.url }}" download class="text-success ms-2">
+                        <i class="bi bi-download"></i> Descargar
+                      </a>
+                    </small>
+                  {% else %}
+                    <small class="text-muted d-block mb-1">Sin archivo cargado</small>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              {{ field|add_class:"form-control rounded-2 shadow-sm" }}
+
+              {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+              {% endif %}
+
+              {% for error in field.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <hr class="my-4">
+
+      <!-- Asignación -->
+      <div class="p-3 rounded-2" style="background-color: #e8f0fe; border-left: 5px solid #0d6efd;">
+        {% if campaña.grupos.all %}
+          <strong>👥 Asignada al grupo:</strong>
+          {% for grupo in campaña.grupos.all %}
+            {{ grupo.nombre }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        {% elif campaña.usuarios.all %}
+          <strong>👤 Asignada a empleado:</strong>
+          {% for user in campaña.usuarios.all %}
+            {{ user.first_name }} {{ user.last_name }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        {% else %}
+          <em>Esta campaña no está asignada a ningún grupo o usuario.</em>
+        {% endif %}
+      </div>
+
+      <!-- Botones -->
+      <div class="mt-4 d-flex gap-3 justify-content-start">
+        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+          <i class="bi bi-check-circle me-1"></i>Actualizar
+        </button>
+        <a href="{% url 'listar_campañas' %}" class="btn btn-outline-secondary btn-lg shadow-sm">
+          <i class="bi bi-x-circle me-1"></i>Cancelar
+        </a>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-center mb-4">📢 Campañas</h2>
+
+<!-- Filtros en una sola línea con botones juntos -->
+<form method="get" class="row g-2 mb-4 align-items-end">
+    <div class="col-md-2">
+        <label for="estado" class="form-label">Estado</label>
+        <select name="estado" id="estado" class="form-select">
+            <option value="">Todos</option>
+            <option value="activa" {% if request.GET.estado == 'activa' %}selected{% endif %}>Activa</option>
+            <option value="pausada" {% if request.GET.estado == 'pausada' %}selected{% endif %}>Pausada</option>
+            <option value="por_aprobacion" {% if request.GET.estado == 'por_aprobacion' %}selected{% endif %}>Por aprobación</option>
+            <option value="finalizada" {% if request.GET.estado == 'finalizada' %}selected{% endif %}>Finalizada</option>
+            <option value="rechazada" {% if request.GET.estado == 'rechazada' %}selected{% endif %}>Rechazada</option>
+            <option value="aprobada" {% if request.GET.estado == 'aprobada' %}selected{% endif %}>Aprobada</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="periodicidad" class="form-label">Periodicidad</label>
+        <select name="periodicidad" id="periodicidad" class="form-select">
+            <option value="">Todas</option>
+            <option value="diaria" {% if request.GET.periodicidad == 'diaria' %}selected{% endif %}>Diaria</option>
+            <option value="semanal" {% if request.GET.periodicidad == 'semanal' %}selected{% endif %}>Semanal</option>
+            <option value="mensual" {% if request.GET.periodicidad == 'mensual' %}selected{% endif %}>Mensual</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="fecha_desde" class="form-label">Desde</label>
+        <input type="date" name="fecha_desde" id="fecha_desde" class="form-control" value="{{ request.GET.fecha_desde }}">
+    </div>
+    <div class="col-md-2">
+        <label for="fecha_hasta" class="form-label">Hasta</label>
+        <input type="date" name="fecha_hasta" id="fecha_hasta" class="form-control" value="{{ request.GET.fecha_hasta }}">
+    </div>
+    <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-primary mt-4">Filtrar</button>
+        <a href="{% url 'listar_campañas' %}" class="btn btn-secondary mt-4">Limpiar</a>
+    </div>
+</form>
+
+<!-- Botones de acciones -->
+<div class="d-flex flex-wrap gap-2 mb-4">
+  <a href="{% url 'crear_campaña' %}" class="btn btn-primary">Crear Campaña</a>
+  <a href="{% url 'listar_codigos' %}" class="btn btn-outline-info">Códigos</a>
+
+  <div class="dropdown">
+    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+      Exportar
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="{% url 'exportar_campañas_pdf' %}" target="_blank">Exportar a PDF</a></li>
+      <li><a class="dropdown-item" href="{% url 'exportar_campañas_excel' %}">Exportar a Excel</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Tabla de campañas con bordes -->
+<table class="table table-bordered table-striped align-middle text-center">
+  <thead class="table-light">
+    <tr>
+      <th>ID</th>
+      <th>Código</th>
+      <th>Nombre</th>
+      <th>Detalle</th>
+      <th>Estado</th>
+      <th>Periodicidad</th>
+      <th>Multimedia</th>
+      <th>Asignación</th>
+      <th>Creación</th>
+      <th>Vencimiento</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for campaña in campañas %}
+    <tr>
+      <td>{{ campaña.id }}</td>
+      <td>{{ campaña.codigo.codigo }}</td>
+      <td>{{ campaña.codigo.nombre }}</td>
+      <td>{{ campaña.detalle }}</td>
+      <td>{{ campaña.estado }}</td>
+      <td>{{ campaña.periodicidad }}</td>
+
+      <!-- Multimedia -->
+      <td>
+        {% if campaña.multimedia %}
+          <a href="{{ campaña.multimedia.url }}" target="_blank" class="text-primary me-2" title="Ver archivo">
+            <i class="bi bi-eye-fill fs-5"></i>
+          </a>
+          <a href="{{ campaña.multimedia.url }}" download class="text-success" title="Descargar archivo">
+            <i class="bi bi-download fs-5"></i>
+          </a>
+        {% else %}
+          <span class="text-muted">No disponible</span>
+        {% endif %}
+      </td>
+
+      <!-- Asignación -->
+      <td>
+        {% if campaña.grupos.all %}
+            {% with grupo=campaña.grupos.all.0 %}
+                👥 {{ grupo.nombre }}
+            {% endwith %}
+        {% elif campaña.campanaasignada_set.all %}
+            {% with asignacion=campaña.campanaasignada_set.all.0 %}
+                👤 {{ asignacion.empleado.first_name }} {{ asignacion.empleado.last_name }}
+            {% endwith %}
+        {% else %}
+            <span class="text-muted">No asignado</span>
+        {% endif %}
+      </td>
+
+      <!-- Fecha de creación -->
+      <td>{{ campaña.fecha_creacion|date:"Y-m-d H:i" }}</td>
+
+      <!-- Fecha de vencimiento -->
+      <td>
+        {% if campaña.campanaasignada_set.all %}
+            {% with asignacion=campaña.campanaasignada_set.all.0 %}
+                {{ asignacion.fecha_vencimiento|date:"Y-m-d H:i" }}
+            {% endwith %}
+        {% else %}
+            <span class="text-muted">No definido</span>
+        {% endif %}
+      </td>
+
+      <!-- Acciones -->
+      <td>
+        <div class="d-flex justify-content-center gap-2">
+          <a href="{% url 'editar_campaña' campaña.id %}" class="btn btn-warning btn-sm">Editar</a>
+          <a href="{% url 'eliminar_campaña' campaña.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+        </div>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="11" class="text-center">No hay campañas creadas.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="text-center mt-4">
+  <a href="/panel/dashboard/" class="btn btn-secondary">Volver</a>
+</div>
+
+{% endblock %}
