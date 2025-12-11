@@ -97,10 +97,8 @@ def login_view(request):
             rol = usuario.rol.nombre if usuario.rol else None
             if rol == 'Administrador' or usuario.is_superuser:
                 return redirect('admin_dashboard')
-            elif rol == 'Empleado':
-                return redirect('dashboard_empleado')
             else:
-                return redirect('inicio')
+                return redirect('dashboard_empleado')
         else:
             messages.error(request, 'Credenciales incorrectas')
 
