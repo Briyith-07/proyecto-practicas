@@ -46,7 +46,7 @@
             </p>
         </div>
         <div class="card-footer text-center">
-            <a href="/Notificaciones/listar_notificaciones.html" class="btn btn-outline-secondary">⬅ Volver</a>
+            <a href="{% url 'listar_notificaciones' %}" class="btn btn-outline-secondary">⬅ Volver</a>
             <a href="{% url 'editar_notificacion' notificacion.id %}" class="btn btn-warning">✏ Editar</a>
             <a href="{% url 'eliminar_notificacion' notificacion.id %}" class="btn btn-danger">🗑 Eliminar</a>
         </div>
