@@ -23,7 +23,7 @@ tzdata==2025.2
 xlsxwriter==3.2.5
 gunicorn>=20.1.0,<21
 python-dotenv==1.0.1
-django-crispy-forms==2.2
 crispy-bootstrap5==0.6
+
 
 
